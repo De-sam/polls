@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Print Codes</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #1F2937;
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #1F2937;
+      z-index: 1000;
+      border-bottom: 1px solid #2D3748;
+    }
+
+    .top-bar a,
+    .top-bar button {
+      background-color: #1E3A8A;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .top-bar button:hover,
+    .top-bar a:hover {
+      background-color: #3749A4;
+    }
+
+    #deleteBtn {
+      background-color: #DC2626;
+    }
+
+    #deleteBtn:hover {
+      background-color: #B91C1C;
+    }
+
+    header {
+      text-align: center;
+      margin-top: 80px;
+      padding-bottom: 1rem;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      margin: 0;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 1rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, auto);
+      gap: 16px;
+      justify-content: center;
+      margin-top: 1rem;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .code {
+      background-color: #1E3A8A;
+      padding: 14px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-align: center;
+      min-width: 160px;
+    }
+
+    .empty-message {
+      grid-column: span 5;
+      text-align: center;
+      font-weight: 600;
+      color: #D1D5DB;
+      padding: 2rem 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    .pagination {
+      margin-top: 1rem;
+    }
+
+    .pagination a {
+      color: #7C3AED;
+      text-decoration: none;
+      margin: 0 8px;
+      font-weight: bold;
+    }
+
+    .pagination span {
+      color: #10B981;
+      margin: 0 8px;
+      font-weight: bold;
+    }
+
+    .pagination a:hover {
+      text-decoration: underline;
+    }
+
+    /* Confirmation Modal */
+    #confirmModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1001;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #confirmModal .modal-box {
+      background-color: #DC2626;
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+
+    #confirmModal .modal-box h2 {
+      margin: 0 0 1rem;
+      font-size: 1.5rem;
+    }
+
+    #confirmModal .modal-box p {
+      font-size: 1rem;
+    }
+
+    #confirmModal .modal-box button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      margin: 0 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #confirmDelete {
+      background-color: black;
+      color: white;
+    }
+
+    #cancelDelete {
+      background-color: white;
+      color: #1F2937;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fixed Top Bar -->
+  <div class="top-bar">
+    <a href="{% url 'homepage' %}">← Home</a>
+    <div style="display: flex; gap: 10px;">
+      <button onclick="window.print()">🖨️ Print Codes</button>
+      <button id="deleteBtn">🗑️ Delete All</button>
+    </div>
+  </div>
+
+  <header>
+    <h1>Generated Voting Codes</h1>
+  </header>
+
+  <main>
+    <div class="grid">
+      {% for code in page_obj %}
+        <div class="code">{{ code.code }}</div>
+      {% empty %}
+        <div class="empty-message">No codes generated yet.</div>
+      {% endfor %}
+    </div>
+  </main>
+
+  <footer>
+    <div class="pagination">
+      {% if page_obj.has_previous %}
+        <a href="?page=1">« First</a>
+        <a href="?page={{ page_obj.previous_page_number }}">‹ Prev</a>
+      {% endif %}
+
+      <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next ›</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">Last »</a>
+      {% endif %}
+    </div>
+  </footer>
+
+  <!-- Confirmation Modal -->
+  <div id="confirmModal">
+    <div class="modal-box">
+      <h2>⚠️ Are you sure?</h2>
+      <p>This will delete <strong>ALL</strong> voting codes permanently.</p>
+      <div style="margin-top: 1.5rem;">
+        <button id="confirmDelete">Yes, Delete All</button>
+        <button id="cancelDelete">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const deleteBtn = document.getElementById("deleteBtn");
+    const confirmModal = document.getElementById("confirmModal");
+    const confirmDelete = document.getElementById("confirmDelete");
+    const cancelDelete = document.getElementById("cancelDelete");
+
+    deleteBtn.addEventListener("click", () => {
+      confirmModal.style.display = "flex";
+    });
+
+    cancelDelete.addEventListener("click", () => {
+      confirmModal.style.display = "none";
+    });
+
+    confirmDelete.addEventListener("click", () => {
+      fetch("{% url 'delete_all_codes' %}", {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}",
+        },
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          confirmModal.style.display = "none";
+          location.reload();
+        } else {
+          alert("Failed to delete codes.");
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

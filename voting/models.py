@@ -1,0 +1,23 @@
+from django.db import models
+from django.utils import timezone
+import uuid
+
+class VotingCode(models.Model):
+    code = models.CharField(max_length=20, unique=True)
+    is_used = models.BooleanField(default=False)
+    used_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return self.code
+
+    @classmethod
+    def create_codes(cls, quantity=100):
+        created = 0
+        codes = []
+        while created < quantity:
+            new_code = uuid.uuid4().hex[:8].upper()
+            if not cls.objects.filter(code=new_code).exists():
+                codes.append(cls(code=new_code))
+                created += 1
+        cls.objects.bulk_create(codes)
+        return codes

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Generate Codes</title>
+  <style>
+    body {
+      background-color: #1F2937; /* Charcoal Gray */
+      color: #FFFFFF;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .container {
+      background-color: #1E3A8A; /* Primary Color */
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      padding: 40px 30px;
+      max-width: 440px;
+      width: 90%;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container h1 {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+      color: #FFFFFF;
+    }
+
+    .container .subtext {
+      color: #D1D5DB;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    input[type="number"] {
+      padding: 10px;
+      width: 60%;
+      max-width: 180px;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    button {
+      padding: 12px 24px;
+      background-color: #10B981;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #059669;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    #success {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    .link-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: auto;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+
+    .link-btn {
+      background-color: #7C3AED;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .link-btn:hover {
+      background-color: #6B21A8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Generate Voting Codes</h1>
+    <p class="subtext">Enter the number of codes to generate</p>
+
+    <form id="codeForm">
+      {% csrf_token %}
+      <input type="number" name="quantity" placeholder="e.g. 10" min="1" required />
+      <button type="submit" id="generateBtn">Generate Codes</button>
+    </form>
+
+    <div id="success"></div>
+
+    <!-- Bottom buttons -->
+    <div class="link-buttons">
+      <a class="link-btn" href="{% url 'print_page' %}">→ Go to Print Page</a>
+      <a class="link-btn" href="{% url 'register_participants' %}">→ Register Participants</a>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("codeForm");
+    const button = document.getElementById("generateBtn");
+    const success = document.getElementById("success");
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const quantity = form.quantity.value;
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+      button.disabled = true;
+      button.textContent = "Generating...";
+
+      fetch("", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "X-CSRFToken": csrfToken,
+        },
+        body: new URLSearchParams({ quantity })
+      })
+      .then(res => res.json())
+      .then(data => {
+        success.textContent = data.message;
+        success.style.color = "#10B981";
+        button.disabled = false;
+        button.textContent = "Generate Codes";
+        form.reset();
+
+        setTimeout(() => {
+          success.textContent = "";
+        }, 2000);
+      })
+      .catch(err => {
+        success.textContent = "Something went wrong.";
+        success.style.color = "#DC2626";
+        button.disabled = false;
+        button.textContent = "Generate Codes";
+
+        setTimeout(() => {
+          success.textContent = "";
+        }, 2000);
+      });
+    });
+  </script>
+</body>
+</html>
