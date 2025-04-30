@@ -4,8 +4,12 @@
   <meta charset="UTF-8">
   <title>Generate Codes</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      background-color: #1F2937; /* Charcoal Gray */
+      background-color: #1F2937;
       color: #FFFFFF;
       font-family: 'Poppins', sans-serif;
       margin: 0;
@@ -14,10 +18,39 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
+      position: relative;
+    }
+
+    /* Top bar */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: #1F2937;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: flex-end;
+      z-index: 1000;
+      border-bottom: 1px solid #2D3748;
+    }
+
+    .top-bar a {
+      background-color: #7C3AED;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+
+    .top-bar a:hover {
+      background-color: #6B21A8;
     }
 
     .container {
-      background-color: #1E3A8A; /* Primary Color */
+      background-color: #1E3A8A;
       border-radius: 16px;
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
       padding: 40px 30px;
@@ -28,12 +61,12 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      margin-top: 80px; /* for spacing under top bar */
     }
 
     .container h1 {
       font-size: 2.2rem;
       margin-bottom: 0.5rem;
-      color: #FFFFFF;
     }
 
     .container .subtext {
@@ -90,9 +123,8 @@
       display: flex;
       gap: 12px;
       justify-content: center;
-      margin-top: auto;
-      flex-wrap: wrap;
       margin-top: 2rem;
+      flex-wrap: wrap;
     }
 
     .link-btn {
@@ -111,6 +143,12 @@
   </style>
 </head>
 <body>
+
+  <!-- Top right Register button -->
+  <div class="top-bar">
+    <a href="{% url 'register_participants' %}">Register Participants</a>
+  </div>
+
   <div class="container">
     <h1>Generate Voting Codes</h1>
     <p class="subtext">Enter the number of codes to generate</p>
@@ -123,10 +161,9 @@
 
     <div id="success"></div>
 
-    <!-- Bottom buttons -->
     <div class="link-buttons">
       <a class="link-btn" href="{% url 'print_page' %}">→ Go to Print Page</a>
-      <a class="link-btn" href="{% url 'register_participants' %}">→ Register Participants</a>
+      <a class="link-btn" href="{% url 'view_results' %}">📊 View Results</a>
     </div>
   </div>
 

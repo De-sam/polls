@@ -7,6 +7,14 @@ class VotingCode(models.Model):
     is_used = models.BooleanField(default=False)
     used_at = models.DateTimeField(null=True, blank=True)
 
+    def mark_used(self):
+        self.is_used = True
+        self.used_at = timezone.now()
+        self.save()
+
+    def __str__(self):
+        return self.code
+    
     def __str__(self):
         return self.code
 

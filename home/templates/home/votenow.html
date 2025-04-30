@@ -83,6 +83,11 @@
       <input type="text" name="code" placeholder="Enter participant code" required />
       <button type="submit">Vote Now</button>
     </form>
+    
+    {% if error %}
+      <p style="color:#DC2626; margin-top: 1rem; font-weight: bold;">{{ error }}</p>
+    {% endif %}
+    
   </div>
 </body>
 </html>
