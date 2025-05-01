@@ -133,6 +133,22 @@
           }
         });
       });
+
+      // Prevent submit if not all categories are voted
+      const form = document.querySelector('form');
+      form.addEventListener('submit', function (e) {
+        const voteGroups = new Set();
+        radios.forEach(r => voteGroups.add(r.name));
+
+        for (let group of voteGroups) {
+          const checked = document.querySelector(`input[name="${group}"]:checked`);
+          if (!checked) {
+            e.preventDefault();
+            alert(`Please vote in every category. You missed: ${group.replace('vote_', 'Position ')}`);
+            return false;
+          }
+        }
+      });
     });
   </script>
 
