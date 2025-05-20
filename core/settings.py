@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-%r&(f=l4s=#-(^%er1d-y6r1b!=u!355ctu(j)6prh898u^2p#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['election-kif3.onrender.com', 'localhost', '127.0.0.1']
+
 
 
 # Application definition
