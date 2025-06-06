@@ -6,6 +6,9 @@ from voting.models import VotingCode
 from candidates.models import Position, Candidate
 from django.shortcuts import render, redirect
 from django.utils import timezone
+from django.conf import settings
+from django.contrib import messages
+
 
 
 
@@ -32,6 +35,18 @@ def vote_now(request):
 # ✅  View handling the vote logic
 def cast_vote(request):
     code = request.session.get('voting_code', None)
+
+    # 🛠️ Print current time and deadline for debugging
+    print("⏱️ Current time:", timezone.now())
+    print("🚫 Voting deadline:", settings.VOTING_END_TIME)
+
+    # 🛑 Voting deadline check
+    if timezone.now() > settings.VOTING_END_TIME:
+        print("❌ Voting blocked — deadline has passed.")
+        messages.error(request, "🕒 Voting has ended.")
+        return redirect('homepage')
+    else:
+        print("✅ Voting allowed — still within deadline.")
 
     if not code:
         return redirect('homepage')  # Redirect if no valid voting session

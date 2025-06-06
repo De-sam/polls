@@ -13,6 +13,22 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from decouple import config, Csv
 import os
+from datetime import datetime
+from django.utils.timezone import make_aware
+import pytz
+from pytz import timezone as pytz_timezone
+
+VOTING_END_TIME = make_aware(
+    datetime(2025, 6, 25, 15, 0, 0),
+    timezone=pytz_timezone("Africa/Lagos")  # ⬅️ Add this
+)
+
+
+lagos_tz = pytz.timezone("Africa/Lagos")
+# Voting deadline (Year, Month, Day, Hour, Minute, Second)
+VOTING_END_TIME = make_aware(datetime(2025, 6, 25, 15, 0, 0), timezone=lagos_tz)
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -107,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Lagos'
 
 USE_I18N = True
 

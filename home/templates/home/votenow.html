@@ -77,6 +77,14 @@
 </head>
 <body>
   <div class="card">
+    {% if messages %}
+  <div>
+    {% for message in messages %}
+      <div class="alert alert-danger">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+
     <h1>Vote Now</h1>
     <form method="POST">
       {% csrf_token %}

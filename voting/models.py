@@ -6,7 +6,8 @@ class VotingCode(models.Model):
     code = models.CharField(max_length=20, unique=True)
     is_used = models.BooleanField(default=False)
     used_at = models.DateTimeField(null=True, blank=True)
-
+    telegram_user_id = models.CharField(max_length=50, unique=True, null=True, blank=True)  # ✅ This handles Telegram voters
+    
     def mark_used(self):
         self.is_used = True
         self.used_at = timezone.now()
