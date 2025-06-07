@@ -1,11 +1,12 @@
 import json
 import logging
-import asyncio
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from telegram import Update
-from .telegram_app import app
+from asgiref.sync import async_to_sync
+from .telegram_app import app  # 🔁 Your bot is initialized here
 
+# Set up logging (optional but helpful)
 logger = logging.getLogger(__name__)
 
 @csrf_exempt
@@ -14,14 +15,15 @@ def telegram_webhook(request):
         try:
             data = json.loads(request.body.decode("utf-8"))
             logger.info(f"📥 Received update: {data}")
+
             update = Update.de_json(data, app.bot)
 
-            # ✅ Don't run and close the loop every time — just schedule it
-            asyncio.ensure_future(app.process_update(update))
+            # ✅ Use async_to_sync to avoid 'event loop is closed' error
+            async_to_sync(app.process_update)(update)
 
             return JsonResponse({"status": "ok"})
         except Exception as e:
-            logger.exception("🔥 Webhook error")
+            logger.error(f"❌ Error processing update: {e}")
             return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"error": "Only POST allowed"}, status=405)
