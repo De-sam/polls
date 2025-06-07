@@ -16,11 +16,8 @@ def telegram_webhook(request):
             logger.info(f"📥 Received update: {data}")
             update = Update.de_json(data, app.bot)
 
-            async def handle_update():
-                await app.initialize()  # Ensure it's ready
-                await app.process_update(update)  # ✅ this line must be awaited
-
-            asyncio.run(handle_update())  # 🔥 run it synchronously for now
+            # ✅ Don't run and close the loop every time — just schedule it
+            asyncio.ensure_future(app.process_update(update))
 
             return JsonResponse({"status": "ok"})
         except Exception as e:
