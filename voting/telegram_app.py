@@ -2,28 +2,32 @@ from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
     CallbackQueryHandler,
+    CallbackContext,
 )
+from telegram.ext import ApplicationHandlerStop  # Optional but good for advanced handling
+import logging
 from decouple import config
 from .bot import start, vote, handle_vote_selection
-import asyncio
 
 BOT_TOKEN = config("TELEGRAM_BOT_TOKEN")
 
-# Global bot application
-app = ApplicationBuilder().token(BOT_TOKEN).build()
+app = None
 
-# Register handlers
-app.add_handler(CommandHandler("start", start))
-app.add_handler(CommandHandler("vote", vote))
-app.add_handler(CallbackQueryHandler(handle_vote_selection))
+# Define the error handler
+async def error_handler(update, context: CallbackContext):
+    logging.exception(f"❌ Error occurred: {context.error}")
 
+def get_bot_app():
+    global app
+    if app is None:
+        app = ApplicationBuilder().token(BOT_TOKEN).build()
 
-async def setup_bot():
-    await app.initialize()
-    await app.start()  # 🔥 This fixes the first-run issue
-    # DO NOT call idle() since we’re using Django webhook mode
-    print("✅ Telegram bot initialized and ready via webhook")
+        # Register command + callback handlers
+        app.add_handler(CommandHandler("start", start))
+        app.add_handler(CommandHandler("vote", vote))
+        app.add_handler(CallbackQueryHandler(handle_vote_selection))
 
+        # Register the error handler 🛡️
+        app.add_error_handler(error_handler)
 
-# Properly launch setup
-asyncio.run(setup_bot())
+    return app
