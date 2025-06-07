@@ -1,5 +1,4 @@
 import os
-import django
 import logging
 from decouple import config
 from asgiref.sync import sync_to_async
@@ -14,7 +13,6 @@ from telegram.ext import (
 
 # Django setup
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
-django.setup()
 
 from django.conf import settings
 from django.utils.timezone import now
