@@ -1,4 +1,3 @@
-# bot.py
 import os
 import django
 import logging
@@ -17,6 +16,8 @@ from telegram.ext import (
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 django.setup()
 
+from django.conf import settings
+from django.utils.timezone import now
 from voting.models import VotingCode
 
 # Logging setup
@@ -24,6 +25,11 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 BOT_TOKEN = config("TELEGRAM_BOT_TOKEN")
+
+# ---------- Voting Deadline Check ----------
+
+def is_voting_expired():
+    return now() > settings.VOTING_END_TIME
 
 # ---------- Database Functions ----------
 
@@ -75,6 +81,10 @@ def save_votes(telegram_id, selections):
 # ---------- Handlers ----------
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if is_voting_expired():
+        await update.message.reply_text("⏳ Voting has ended. Thank you for your interest!")
+        return
+
     telegram_id = str(update.effective_user.id)
     voter, _ = await get_or_create_voter(telegram_id)
 
@@ -89,6 +99,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 async def vote(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if is_voting_expired():
+        await update.message.reply_text("⏳ Voting has closed. We appreciate your enthusiasm!")
+        return
+
     telegram_id = str(update.effective_user.id)
     voter = await get_voter(telegram_id)
 
@@ -118,7 +132,6 @@ async def vote(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=reply_markup
         )
 
-    # Submit button after all positions
     submit_button = [
         [InlineKeyboardButton("📨 Submit Vote", callback_data="SUBMIT_VOTE")]
     ]
@@ -137,11 +150,15 @@ async def handle_vote_selection(update: Update, context: ContextTypes.DEFAULT_TY
         context.user_data["selections"] = {}
 
     if data == "SUBMIT_VOTE":
+        if is_voting_expired():
+            await query.edit_message_text("⏳ Voting has ended. Submissions are no longer accepted.")
+            return
+
         selections = context.user_data.get("selections", {})
         total_required = await get_total_positions_count()
 
         if not selections:
-            await query.edit_message_text("✅ voting completed")
+            await query.edit_message_text("⚠️ You haven’t selected any candidates. Please vote for at least one.")
             return
 
         success = await save_votes(telegram_id, selections)
