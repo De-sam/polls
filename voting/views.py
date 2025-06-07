@@ -1,6 +1,6 @@
 import json
-import asyncio
 import logging
+import asyncio
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from telegram import Update
@@ -16,12 +16,11 @@ def telegram_webhook(request):
             logger.info(f"📥 Received update: {data}")
             update = Update.de_json(data, app.bot)
 
-            # ✅ Ensure bot is initialized
             async def handle_update():
-                await app.initialize()  # <--- required to bootstrap async processing
-                await app.process_update(update)
+                await app.initialize()  # Ensure it's ready
+                await app.process_update(update)  # ✅ this line must be awaited
 
-            asyncio.ensure_future(handle_update())
+            asyncio.run(handle_update())  # 🔥 run it synchronously for now
 
             return JsonResponse({"status": "ok"})
         except Exception as e:

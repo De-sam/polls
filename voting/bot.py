@@ -81,6 +81,7 @@ def save_votes(telegram_id, selections):
 # ---------- Handlers ----------
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    print("✅ /start handler called")
     if is_voting_expired():
         await update.message.reply_text("⏳ Voting has ended. Thank you for your interest!")
         return
