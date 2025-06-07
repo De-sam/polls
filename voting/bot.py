@@ -2,6 +2,8 @@ import os
 import logging
 from decouple import config
 from asgiref.sync import sync_to_async
+import uuid
+
 
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
@@ -33,10 +35,20 @@ def is_voting_expired():
 
 @sync_to_async
 def get_or_create_voter(telegram_id):
-    return VotingCode.objects.get_or_create(
-        telegram_user_id=telegram_id,
-        defaults={"is_used": False}
-    )
+    from voting.models import VotingCode
+
+    # Always generate a unique fallback code
+    code = f"TGC-{telegram_id}-{uuid.uuid4().hex[:4].upper()}"
+
+    try:
+        voter, created = VotingCode.objects.get_or_create(
+            telegram_user_id=telegram_id,
+            defaults={"is_used": False, "code": code}
+        )
+        return voter, created
+    except Exception as e:
+        logger.error(f"🔥 Failed to create/get voter: {e}")
+        raise
 
 @sync_to_async
 def get_voter(telegram_id):
