@@ -90,7 +90,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     voter, _ = await get_or_create_voter(telegram_id)
 
     if voter.is_used:
-        await update.message.reply_text("❌ You've already voted with this account.")
+        await update.message.reply_text("❌ Sorry you cannot vote more than once.")
     else:
         await update.message.reply_text(
             "👋🏽 Hello and welcome to the *2025/2026 Perfectship Elections*!\n\n"
