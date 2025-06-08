@@ -1,5 +1,7 @@
 import os
 import logging
+import uuid
+import asyncio
 from decouple import config
 from asgiref.sync import sync_to_async
 
@@ -24,19 +26,25 @@ logger = logging.getLogger(__name__)
 
 BOT_TOKEN = config("TELEGRAM_BOT_TOKEN")
 
-# ---------- Voting Deadline Check ----------
 
+# ---------- Voting Deadline Check ----------
 def is_voting_expired():
     return now() > settings.VOTING_END_TIME
 
-# ---------- Database Functions ----------
 
+# ---------- Database Functions ----------
 @sync_to_async
 def get_or_create_voter(telegram_id):
-    return VotingCode.objects.get_or_create(
-        telegram_user_id=telegram_id,
-        defaults={"is_used": False}
-    )
+    code = f"TGC-{telegram_id}-{uuid.uuid4().hex[:4].upper()}"
+    try:
+        voter, created = VotingCode.objects.get_or_create(
+            telegram_user_id=telegram_id,
+            defaults={"is_used": False, "code": code}
+        )
+        return voter, created
+    except Exception as e:
+        logger.error(f"🔥 Failed to create/get voter: {e}")
+        raise
 
 @sync_to_async
 def get_voter(telegram_id):
@@ -61,25 +69,20 @@ def get_total_positions_count():
 @sync_to_async
 def save_votes(telegram_id, selections):
     from candidates.models import Candidate
-    from voting.models import VotingCode
-
     voter = VotingCode.objects.filter(telegram_user_id=telegram_id).first()
     if voter is None or voter.is_used:
         return False
-
     for candidate_id in selections.values():
         candidate = Candidate.objects.get(id=candidate_id)
         candidate.votes += 1
         candidate.save()
-
     voter.is_used = True
     voter.save()
     return True
 
-# ---------- Handlers ----------
 
+# ---------- Handlers ----------
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    print("✅ /start handler called")
     if is_voting_expired():
         await update.message.reply_text("⏳ Voting has ended. Thank you for your interest!")
         return
@@ -97,7 +100,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown"
         )
 
+
+# ✅ This now just triggers background vote flow
 async def vote(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    asyncio.create_task(handle_vote_flow(update, context))
+
+
+# ✅ Full vote logic moved here to run asynchronously
+async def handle_vote_flow(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if is_voting_expired():
         await update.message.reply_text("⏳ Voting has closed. We appreciate your enthusiasm!")
         return
@@ -112,7 +122,8 @@ async def vote(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("🛑 You have already voted.")
         return
 
-    context.user_data["selections"] = {}
+    if "selections" not in context.user_data:
+        context.user_data["selections"] = {}
 
     positions_with_candidates = await get_positions_with_candidates()
 
@@ -130,14 +141,14 @@ async def vote(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="Markdown",
             reply_markup=reply_markup
         )
+        await asyncio.sleep(0.4)  # Prevent Telegram rate limits
 
-    submit_button = [
-        [InlineKeyboardButton("📨 Submit Vote", callback_data="SUBMIT_VOTE")]
-    ]
+    submit_button = [[InlineKeyboardButton("📨 Submit Vote", callback_data="SUBMIT_VOTE")]]
     await update.message.reply_text(
         "✅ After selecting one candidate per position, click below to submit your vote.",
         reply_markup=InlineKeyboardMarkup(submit_button)
     )
+
 
 async def handle_vote_selection(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -182,27 +193,19 @@ async def handle_vote_selection(update: Update, context: ContextTypes.DEFAULT_TY
         logger.error(f"Vote selection error: {e}")
         await query.edit_message_text("❌ Something went wrong while saving your selection.")
 
-# ---------- Main ----------
 
+# ---------- Main ----------
 async def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
-
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("vote", vote))
     app.add_handler(CallbackQueryHandler(handle_vote_selection))
-
     print("🚀 Bot is live! Listening for commands...")
     await app.run_polling()
 
+
 # ---------- Entry Point ----------
-
 if __name__ == "__main__":
-    import asyncio
     import nest_asyncio
-
     nest_asyncio.apply()
-    loop = asyncio.get_event_loop()
-    try:
-        loop.run_until_complete(main())
-    except KeyboardInterrupt:
-        print("🛑 Bot stopped by user.")
+    asyncio.run(main())
