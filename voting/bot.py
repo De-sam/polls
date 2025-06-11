@@ -1,5 +1,7 @@
 import os
 import logging
+import base64
+from io import BytesIO
 from decouple import config
 from asgiref.sync import sync_to_async
 
@@ -117,20 +119,37 @@ async def vote(update: Update, context: ContextTypes.DEFAULT_TYPE):
     positions_with_candidates = await get_positions_with_candidates()
 
     for position_id, position_name, candidates in positions_with_candidates:
-        keyboard = [
-            [InlineKeyboardButton(
-                f"{c.surname} {c.first_name} ({c.student_class})",
-                callback_data=f"{position_id}:{c.id}"
-            )] for c in candidates
-        ]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-
         await update.message.reply_text(
             f"*{position_name}*\nPlease choose your candidate:",
-            parse_mode="Markdown",
-            reply_markup=reply_markup
+            parse_mode="Markdown"
         )
 
+        for candidate in candidates:
+            caption = f"{candidate.surname} {candidate.first_name} ({candidate.student_class})"
+            button = InlineKeyboardMarkup([[
+                InlineKeyboardButton("🗳️ Vote for this candidate", callback_data=f"{position_id}:{candidate.id}")
+            ]])
+
+            if candidate.profile_image_base64:
+                try:
+                    image_data = base64.b64decode(candidate.profile_image_base64)
+                    image_file = BytesIO(image_data)
+                    image_file.name = f"{candidate.first_name}_{candidate.surname}.jpg"
+
+                    await update.message.reply_photo(
+                        photo=image_file,
+                        caption=caption,
+                        reply_markup=button
+                    )
+                except Exception as e:
+                    logger.warning(f"Could not decode/send image for {caption}: {e}")
+                    await update.message.reply_text(caption, reply_markup=button)
+            else:
+                await update.message.reply_text(caption, reply_markup=button)
+
+        await update.message.reply_text("⬇️ Next position below...")
+
+    # Submit vote button at the end
     submit_button = [
         [InlineKeyboardButton("📨 Submit Vote", callback_data="SUBMIT_VOTE")]
     ]
