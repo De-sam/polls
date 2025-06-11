@@ -70,6 +70,25 @@
       padding: 5px 10px;
       border-radius: 8px;
     }
+
+    .candidate-img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .img-placeholder {
+      width: 50px;
+      height: 50px;
+      background: #ccc;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -94,11 +113,17 @@
                data-bs-parent="#positionsAccordion">
             <div class="accordion-body">
               {% for candidate in position.candidates.all %}
-              <div class="form-check mb-2">
+              <div class="form-check mb-3">
                 <input class="form-check-input" type="radio" name="vote_{{ position.id }}"
                        id="candidate{{ candidate.id }}" value="{{ candidate.id }}">
-                <label class="form-check-label" for="candidate{{ candidate.id }}">
-                  {{ candidate.surname }} {{ candidate.first_name }} ({{ candidate.student_class }})
+                <label class="form-check-label d-flex align-items-center gap-3" for="candidate{{ candidate.id }}">
+                  {% if candidate.profile_image_base64 %}
+                    <img src="data:image/jpeg;base64,{{ candidate.profile_image_base64 }}" alt="Profile Image"
+                         class="candidate-img" />
+                  {% else %}
+                    <div class="img-placeholder">?</div>
+                  {% endif %}
+                  <span>{{ candidate.surname }} {{ candidate.first_name }} ({{ candidate.student_class }})</span>
                 </label>
               </div>
               {% empty %}
@@ -122,7 +147,7 @@
 
       radios.forEach(radio => {
         radio.addEventListener('change', function () {
-          const name = this.name; // e.g. vote_3
+          const name = this.name;
           const positionId = name.split('_')[1];
           const statusEl = document.getElementById(`status-${positionId}`);
 
@@ -134,7 +159,6 @@
         });
       });
 
-      // Prevent submit if not all categories are voted
       const form = document.querySelector('form');
       form.addEventListener('submit', function (e) {
         const voteGroups = new Set();

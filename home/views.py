@@ -115,7 +115,8 @@ def print_page(request):
     page_obj = paginator.get_page(page_number)
     return render(request, 'home/print.html', {'page_obj': page_obj})
 
-# ✅ Register Participants Page
+import base64
+
 def register_participants(request):
     message = None
     positions = Position.objects.all()
@@ -125,6 +126,14 @@ def register_participants(request):
         first_name = request.POST.get("first_name")
         student_class = request.POST.get("student_class")
         position_id = request.POST.get("position_id")
+        profile_image = request.FILES.get("profile_image")
+
+        base64_string = None
+
+        if profile_image:
+            # Read and encode image
+            image_data = profile_image.read()
+            base64_string = base64.b64encode(image_data).decode("utf-8")
 
         if surname and first_name and student_class and position_id:
             position = Position.objects.get(id=position_id)
@@ -132,11 +141,15 @@ def register_participants(request):
                 surname=surname,
                 first_name=first_name,
                 student_class=student_class,
-                position=position
+                position=position,
+                profile_image_base64=base64_string  # 👈 Don't forget this line
             )
             message = f"{surname} {first_name} has been registered successfully!"
 
-    return render(request, "home/register.html", {"positions": positions, "message": message})
+    return render(request, "home/register.html", {
+        "positions": positions,
+        "message": message
+    })
 
 
 # ✅ Delete All Codes (with confirmation)

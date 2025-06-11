@@ -72,19 +72,24 @@
 <body>
   <div class="card">
     <h1>Register a Participant</h1>
-    <form method="POST">
-      {% csrf_token %}
-      <input type="text" name="surname" placeholder="Surname" required />
-      <input type="text" name="first_name" placeholder="First Name" required />
-      <input type="text" name="student_class" placeholder="Class (e.g. SS3A)" required />
-      <select name="position_id" required>
-        <option value="" disabled selected>Select Position</option>
-        {% for position in positions %}
-          <option value="{{ position.id }}">{{ position.name }}</option>
-        {% endfor %}
-      </select>
-      <button type="submit">Register Participant</button>
-    </form>
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  <input type="text" name="surname" placeholder="Surname" required />
+  <input type="text" name="first_name" placeholder="First Name" required />
+  <input type="text" name="student_class" placeholder="Class (e.g. SS3A)" required />
+  <select name="position_id" required>
+    <option value="" disabled selected>Select Position</option>
+    {% for position in positions %}
+      <option value="{{ position.id }}">{{ position.name }}</option>
+    {% endfor %}
+  </select>
+
+  <!-- 📸 New image upload field -->
+  <input type="file" name="profile_image" accept="image/*" />
+
+  <button type="submit">Register Participant</button>
+</form>
+
     
 
     {% if message %}

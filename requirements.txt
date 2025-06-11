@@ -12,6 +12,7 @@ httpx==0.28.1
 idna==3.10
 nest-asyncio==1.6.0
 packaging==25.0
+pillow==11.2.1
 psycopg2-binary==2.9.10
 python-decouple==3.8
 python-telegram-bot==22.1
