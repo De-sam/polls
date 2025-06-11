@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added for responsiveness -->
   <title>Vote Now</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"> <!-- Ensure Poppins font is loaded -->
   <style>
     * {
       box-sizing: border-box;
@@ -14,7 +16,7 @@
       font-family: 'Poppins', sans-serif;
       margin: 0;
       padding: 0;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -22,11 +24,11 @@
 
     .card {
       background-color: #1E3A8A;
-      padding: 2rem;
-      border-radius: 16px;
+      padding: 2.5rem; /* Increased padding for mobile */
+      border-radius: 20px; /* Slightly larger border radius */
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-      width: 100%;
-      max-width: 400px;
+      width: 90%; /* Relative width for smaller screens */
+      max-width: 450px; /* Slightly larger max-width */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -34,8 +36,9 @@
     }
 
     h1 {
-      margin-bottom: 1.5rem;
-      font-size: 2rem;
+      margin-bottom: 2rem;
+      font-size: 2.5rem; /* Larger heading */
+      font-weight: 600;
       text-align: center;
     }
 
@@ -48,42 +51,100 @@
 
     input {
       width: 100%;
-      padding: 12px;
-      font-size: 1rem;
-      border-radius: 8px;
+      padding: 1rem; /* Larger padding for touch */
+      font-size: 1.25rem; /* Larger text */
+      border-radius: 10px;
       border: none;
       text-align: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
     }
 
     button {
-        max-width: 200px;
-        width: 100%;
-        padding: 12px;
-        background-color: #10B981;
-        border: none;
-        color: white;
-        font-size: 1rem;
-        font-weight: bold;
-        border-radius: 8px;
-        cursor: pointer;
-}
-
+      width: 100%;
+      max-width: 250px; /* Wider button */
+      padding: 1rem; /* Larger padding */
+      background-color: #10B981;
+      border: none;
+      color: white;
+      font-size: 1.25rem; /* Larger text */
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
 
     button:hover {
       background-color: #059669;
+    }
+
+    .alert {
+      background-color: #DC2626;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+      text-align: center;
+      width: 100%;
+    }
+
+    p.error {
+      color: #DC2626;
+      margin-top: 1.5rem;
+      font-weight: bold;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+
+    /* Mobile-specific styles */
+    @media screen and (max-width: 600px) {
+      .card {
+        padding: 2rem;
+        width: 95%; /* Nearly full width on small screens */
+        max-width: 400px;
+      }
+
+      h1 {
+        font-size: 2rem; /* Slightly smaller for very small screens */
+      }
+
+      input {
+        padding: 0.9rem;
+        font-size: 1.1rem;
+      }
+
+      button {
+        max-width: 220px;
+        padding: 0.9rem;
+        font-size: 1.1rem;
+      }
+    }
+
+    /* Extra small screens (e.g., < 400px) */
+    @media screen and (max-width: 400px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      input, button {
+        font-size: 1rem;
+        padding: 0.8rem;
+      }
+
+      .card {
+        padding: 1.5rem;
+      }
     }
   </style>
 </head>
 <body>
   <div class="card">
     {% if messages %}
-  <div>
-    {% for message in messages %}
-      <div class="alert alert-danger">{{ message }}</div>
-    {% endfor %}
-  </div>
-{% endif %}
+      <div>
+        {% for message in messages %}
+          <div class="alert">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
 
     <h1>Vote Now</h1>
     <form method="POST">
@@ -93,9 +154,8 @@
     </form>
     
     {% if error %}
-      <p style="color:#DC2626; margin-top: 1rem; font-weight: bold;">{{ error }}</p>
+      <p class="error">{{ error }}</p>
     {% endif %}
-    
   </div>
 </body>
 </html>
