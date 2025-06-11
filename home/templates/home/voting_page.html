@@ -17,7 +17,7 @@
       background-color: #1E3A8A;
       padding: 2rem;
       border-radius: 12px;
-      max-width: 700px;
+      max-width: 900px;
       margin: auto;
     }
 
@@ -45,10 +45,6 @@
       border-radius: 8px;
     }
 
-    .form-check-label {
-      color: #E5E7EB;
-    }
-
     .submit-btn {
       margin-top: 2rem;
       background-color: #10B981;
@@ -71,23 +67,63 @@
       border-radius: 8px;
     }
 
-    .candidate-img {
-      width: 50px;
-      height: 50px;
-      object-fit: cover;
-      border-radius: 50%;
+    /* Custom card-style radio buttons */
+    .d-flex.flex-wrap {
+      gap: 1rem;
     }
 
-    .img-placeholder {
-      width: 50px;
-      height: 50px;
-      background: #ccc;
-      border-radius: 50%;
+    .candidate-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      width: 130px;
+      padding: 1rem;
+      border: 2px solid transparent;
+      border-radius: 12px;
+      background-color: #2C3E50;
+      text-align: center;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .candidate-card:hover {
+      border-color: #10B981;
+      background-color: #1B2631;
+    }
+
+    .btn-check:checked + .candidate-card {
+      border-color: #10B981;
+      background-color: #14532D;
+    }
+
+    .candidate-img-rect {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      background-color: #444;
+    }
+
+    .candidate-img-rect.placeholder {
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #555;
+      font-size: 2rem;
       font-weight: bold;
+      color: #bbb;
+    }
+
+    .candidate-name {
+      font-weight: 600;
+      margin-top: 0.3rem;
+    }
+
+    .candidate-class {
+      font-size: 0.9rem;
+      color: #ccc;
     }
   </style>
 </head>
@@ -112,23 +148,22 @@
           <div id="collapse{{ position.id }}" class="accordion-collapse collapse"
                data-bs-parent="#positionsAccordion">
             <div class="accordion-body">
-              {% for candidate in position.candidates.all %}
-              <div class="form-check mb-3">
-                <input class="form-check-input" type="radio" name="vote_{{ position.id }}"
-                       id="candidate{{ candidate.id }}" value="{{ candidate.id }}">
-                <label class="form-check-label d-flex align-items-center gap-3" for="candidate{{ candidate.id }}">
-                  {% if candidate.profile_image_base64 %}
-                    <img src="data:image/jpeg;base64,{{ candidate.profile_image_base64 }}" alt="Profile Image"
-                         class="candidate-img" />
-                  {% else %}
-                    <div class="img-placeholder">?</div>
-                  {% endif %}
-                  <span>{{ candidate.surname }} {{ candidate.first_name }} ({{ candidate.student_class }})</span>
-                </label>
+              <div class="d-flex flex-wrap">
+                {% for candidate in position.candidates.all %}
+                  <input type="radio" class="btn-check" name="vote_{{ position.id }}" id="candidate{{ candidate.id }}" value="{{ candidate.id }}" autocomplete="off">
+                  <label class="candidate-card" for="candidate{{ candidate.id }}">
+                    {% if candidate.profile_image_base64 %}
+                      <img src="data:image/jpeg;base64,{{ candidate.profile_image_base64 }}" class="candidate-img-rect" alt="Candidate Image">
+                    {% else %}
+                      <div class="candidate-img-rect placeholder">?</div>
+                    {% endif %}
+                    <div class="candidate-name">{{ candidate.surname }} {{ candidate.first_name }}</div>
+                    <div class="candidate-class">({{ candidate.student_class }})</div>
+                  </label>
+                {% empty %}
+                  <p>No candidates available for this position.</p>
+                {% endfor %}
               </div>
-              {% empty %}
-              <p>No candidates available for this position.</p>
-              {% endfor %}
             </div>
           </div>
         </div>
@@ -143,7 +178,7 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      const radios = document.querySelectorAll('.form-check-input');
+      const radios = document.querySelectorAll('.btn-check');
 
       radios.forEach(radio => {
         radio.addEventListener('change', function () {
