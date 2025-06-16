@@ -202,7 +202,12 @@
   <main>
     <div class="grid">
       {% for code in page_obj %}
-        <div class="code">{{ code.code }}</div>
+        <div class="code">
+          {{ code.code }}
+          {% if code.is_used %}
+            ❌
+          {% endif %}
+        </div>
       {% empty %}
         <div class="empty-message">No codes generated yet.</div>
       {% endfor %}
