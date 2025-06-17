@@ -24,7 +24,7 @@ def public_vote(request):
     ip = get_client_ip(request)
 
     if IPVote.objects.filter(ip_address=ip).exists():
-        return HttpResponseForbidden("🛑 You have already voted from this IP.")
+        return HttpResponseForbidden("🛑 Sorry you have already voted before... .")
 
     positions = Position.objects.prefetch_related('candidates').all()
 
