@@ -9,5 +9,7 @@ urlpatterns = [
     path('delete-all-codes/', views.delete_all_codes, name='delete_all_codes'),
     path('vote/', views.cast_vote, name='cast_vote'),  # 
     path('results/', views.view_results, name='view_results'),
+    path('public-vote/', views.public_vote, name='public_vote'),
+
 
 ]

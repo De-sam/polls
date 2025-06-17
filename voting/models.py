@@ -30,3 +30,10 @@ class VotingCode(models.Model):
                 created += 1
         cls.objects.bulk_create(codes)
         return codes
+
+class IPVote(models.Model):
+    ip_address = models.GenericIPAddressField(unique=True)
+    voted_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.ip_address

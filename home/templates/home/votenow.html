@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added for responsiveness -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vote Now</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"> <!-- Ensure Poppins font is loaded -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     * {
       box-sizing: border-box;
@@ -24,11 +24,11 @@
 
     .card {
       background-color: #1E3A8A;
-      padding: 2.5rem; /* Increased padding for mobile */
-      border-radius: 20px; /* Slightly larger border radius */
+      padding: 2.5rem;
+      border-radius: 20px;
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-      width: 90%; /* Relative width for smaller screens */
-      max-width: 450px; /* Slightly larger max-width */
+      width: 90%;
+      max-width: 450px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -37,7 +37,7 @@
 
     h1 {
       margin-bottom: 2rem;
-      font-size: 2.5rem; /* Larger heading */
+      font-size: 2.5rem;
       font-weight: 600;
       text-align: center;
     }
@@ -51,8 +51,8 @@
 
     input {
       width: 100%;
-      padding: 1rem; /* Larger padding for touch */
-      font-size: 1.25rem; /* Larger text */
+      padding: 1rem;
+      font-size: 1.25rem;
       border-radius: 10px;
       border: none;
       text-align: center;
@@ -61,12 +61,12 @@
 
     button {
       width: 100%;
-      max-width: 250px; /* Wider button */
-      padding: 1rem; /* Larger padding */
+      max-width: 250px;
+      padding: 1rem;
       background-color: #10B981;
       border: none;
       color: white;
-      font-size: 1.25rem; /* Larger text */
+      font-size: 1.25rem;
       font-weight: bold;
       border-radius: 10px;
       cursor: pointer;
@@ -95,16 +95,42 @@
       text-align: center;
     }
 
-    /* Mobile-specific styles */
+    .alt-option {
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .alt-option p {
+      color: #D1D5DB;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .alt-option a {
+      display: inline-block;
+      background-color: #3B82F6;
+      color: white;
+      padding: 0.8rem 1.2rem;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .alt-option a:hover {
+      background-color: #2563EB;
+    }
+
     @media screen and (max-width: 600px) {
       .card {
         padding: 2rem;
-        width: 95%; /* Nearly full width on small screens */
+        width: 95%;
         max-width: 400px;
       }
 
       h1 {
-        font-size: 2rem; /* Slightly smaller for very small screens */
+        font-size: 2rem;
       }
 
       input {
@@ -117,9 +143,13 @@
         padding: 0.9rem;
         font-size: 1.1rem;
       }
+
+      .alt-option a {
+        font-size: 1rem;
+        padding: 0.75rem 1rem;
+      }
     }
 
-    /* Extra small screens (e.g., < 400px) */
     @media screen and (max-width: 400px) {
       h1 {
         font-size: 1.8rem;
@@ -147,15 +177,21 @@
     {% endif %}
 
     <h1>Vote Now</h1>
+
     <form method="POST">
       {% csrf_token %}
       <input type="text" name="code" placeholder="Enter participant code" required />
       <button type="submit">Vote Now</button>
     </form>
-    
+
     {% if error %}
       <p class="error">{{ error }}</p>
     {% endif %}
+
+    <div class="alt-option">
+      <p>Don't have a code?</p>
+      <a href="{% url 'public_vote' %}">🌍 Vote Without Code</a>
+    </div>
   </div>
 </body>
 </html>

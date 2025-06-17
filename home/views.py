@@ -9,6 +9,40 @@ from django.utils import timezone
 from django.conf import settings
 from django.contrib import messages
 
+from django.http import HttpResponseForbidden
+from django.shortcuts import render, redirect
+from django.utils.timezone import now
+from candidates.models import Candidate, Position
+from voting.models import IPVote
+from django.conf import settings
+
+def get_client_ip(request):
+    # Behind a proxy? Render likely sets this
+    return request.META.get('HTTP_X_FORWARDED_FOR', '').split(',')[0] or request.META.get('REMOTE_ADDR')
+
+def public_vote(request):
+    ip = get_client_ip(request)
+
+    if IPVote.objects.filter(ip_address=ip).exists():
+        return HttpResponseForbidden("🛑 You have already voted from this IP.")
+
+    positions = Position.objects.prefetch_related('candidates').all()
+
+    if request.method == "POST":
+        for position in positions:
+            candidate_id = request.POST.get(f"vote_{position.id}")
+            if candidate_id:
+                try:
+                    candidate = Candidate.objects.get(id=candidate_id, position=position)
+                    candidate.votes += 1
+                    candidate.save()
+                except Candidate.DoesNotExist:
+                    continue  # Ignore invalid
+
+        IPVote.objects.create(ip_address=ip)
+        return render(request, "home/vote_success.html")
+
+    return render(request, "home/public_vote.html", {"positions": positions})
 
 
 
