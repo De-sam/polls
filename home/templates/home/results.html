@@ -2,37 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Voting Results</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
     body {
       background-color: #1F2937;
       color: white;
       font-family: 'Poppins', sans-serif;
       margin: 0;
-      padding: 2rem;
-    }
-
-    .print-btn {
-      position: fixed;
-      top: 20px;
-      right: 30px;
-      background-color: #10B981;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      z-index: 1000;
-    }
-
-    .print-btn:hover {
-      background-color: #059669;
+      padding: 1rem;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
     }
 
     .container {
       max-width: 900px;
-      margin: auto;
+      width: 95%;
       background-color: #1E3A8A;
       padding: 2rem;
       border-radius: 16px;
@@ -42,63 +31,229 @@
     h1 {
       text-align: center;
       color: #10B981;
+      font-size: 2.5rem;
+      font-weight: 600;
       margin-bottom: 2rem;
     }
 
     .position {
-      margin-bottom: 3rem;
+      margin-bottom: 2.5rem;
     }
 
     .position h2 {
-      margin-bottom: 1.2rem;
       color: #FBBF24;
-      font-size: 1.3rem;
-      border-bottom: 1px solid #4B5563;
-      padding-bottom: 0.4rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+      border-bottom: 2px solid #4B5563;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .candidate {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background-color: #2C3E50;
+      border-radius: 12px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .candidate:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .candidate-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      background-color: #444;
+    }
+
+    .candidate-img.placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: bold;
+      color: #bbb;
+      border: 2px solid #6B7280;
+    }
+
+    .candidate-info {
+      flex-grow: 1;
     }
 
     .label {
       display: flex;
       justify-content: space-between;
-      font-weight: bold;
-      margin-bottom: 4px;
-      font-size: 0.95rem;
+      align-items: center;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .vote-count {
+      color: #D1D5DB;
+      font-size: 0.9rem;
+      font-weight: normal;
     }
 
     .bar-outer {
       width: 100%;
-      height: 16px;
+      height: 12px;
       background-color: #374151;
-      border-radius: 8px;
+      border-radius: 6px;
       overflow: hidden;
-      margin-bottom: 1.2rem;
     }
 
     .bar {
       height: 100%;
-      background-color: #10B981;
-      transition: width 0.6s ease;
-    }
-
-    .vote-count {
-      font-weight: normal;
-      color: #D1D5DB;
+      background: linear-gradient(to right, #10B981, #34D399);
+      transition: width 1s ease;
     }
 
     .no-votes {
       color: #9CA3AF;
       font-style: italic;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .print-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #10B981;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 1000;
+      transition: background-color 0.3s ease;
+    }
+
+    .print-btn:hover {
+      background-color: #059669;
+    }
+
+    /* Mobile Responsiveness */
+    @media screen and (max-width: 600px) {
+      body {
+        padding: 0.5rem;
+      }
+
+      .container {
+        padding: 1.5rem;
+        width: 100%;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .position h2 {
+        font-size: 1.3rem;
+      }
+
+      .candidate {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0.75rem;
+      }
+
+      .candidate-img {
+        width: 60px;
+        height: 60px;
+      }
+
+      .label {
+        font-size: 1rem;
+      }
+
+      .vote-count {
+        font-size: 0.85rem;
+      }
+
+      .print-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    @media screen and (max-width: 400px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      .position h2 {
+        font-size: 1.1rem;
+      }
+
+      .candidate-img {
+        width: 50px;
+        height: 50px;
+      }
+
+      .label {
+        font-size: 0.9rem;
+      }
     }
 
     @media print {
+      body {
+        background-color: white;
+        color: black;
+      }
+
+      .container {
+        box-shadow: none;
+        background-color: white;
+        padding: 1rem;
+      }
+
+      h1 {
+        color: #1E3A8A;
+      }
+
+      .position h2 {
+        color: #1E3A8A;
+        border-bottom: 1px solid #000;
+      }
+
+      .candidate {
+        background-color: white;
+        border: 1px solid #ccc;
+      }
+
+      .bar-outer {
+        background-color: #e0e0e0;
+      }
+
+      .bar {
+        background: #1E3A8A;
+      }
+
+      .vote-count, .no-votes {
+        color: #000;
+      }
+
       .print-btn {
         display: none;
+      }
+
+      .candidate-img, .candidate-img.placeholder {
+        border: 1px solid #000;
       }
     }
   </style>
 </head>
 <body>
-
   <button class="print-btn" onclick="window.print()">🖨️ Print Results</button>
 
   <div class="container">
@@ -110,21 +265,30 @@
 
         {% if position.candidates.exists %}
           {% for candidate in position.candidates.all %}
-            <div class="label">
-              {{ candidate.surname }} {{ candidate.first_name }} ({{ candidate.student_class }})
-              <span class="vote-count">
-                {{ candidate.votes }} vote{{ candidate.votes|pluralize }}
-              </span>
-            </div>
-
-            <div class="bar-outer">
-              {% if position.total_votes > 0 %}
-                {% with percent=candidate.votes|divisibleby:position.total_votes %}
-                  <div class="bar" style="width:{{ percent|floatformat:0 }}%"></div>
-                {% endwith %}
+            <div class="candidate">
+              {% if candidate.profile_image_base64 %}
+                <img src="data:image/jpeg;base64,{{ candidate.profile_image_base64 }}"
+                     class="candidate-img" alt="Candidate {{ candidate.surname }} image">
               {% else %}
-                <div class="bar" style="width:0%"></div>
+                <div class="candidate-img placeholder">?</div>
               {% endif %}
+              <div class="candidate-info">
+                <div class="label">
+                  {{ candidate.surname }} {{ candidate.first_name }} ({{ candidate.student_class }})
+                  <span class="vote-count">
+                    {{ candidate.votes }} vote{{ candidate.votes|pluralize }}
+                  </span>
+                </div>
+                <div class="bar-outer">
+                  {% if position.total_votes > 0 %}
+                    {% with percent=candidate.votes|floatformat:2|div:position.total_votes|mul:100 %}
+                      <div class="bar" style="width: {{ percent|floatformat:0 }}%"></div>
+                    {% endwith %}
+                  {% else %}
+                    <div class="bar" style="width: 0%"></div>
+                  {% endif %}
+                </div>
+              </div>
             </div>
           {% endfor %}
         {% else %}
