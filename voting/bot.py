@@ -33,11 +33,19 @@ def is_voting_expired():
 
 # ---------- Database Functions ----------
 
+import uuid
+
+def generate_code():
+    return uuid.uuid4().hex[:8].upper()
+
 @sync_to_async
 def get_or_create_voter(telegram_id):
     return VotingCode.objects.get_or_create(
-        telegram_user_id=telegram_id,
-        defaults={"is_used": False}
+        telegram_user_id=str(telegram_id),
+        defaults={
+            "code": generate_code(),  # ✅ Always provide a unique code
+            "is_used": False,
+        }
     )
 
 @sync_to_async
