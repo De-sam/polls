@@ -126,10 +126,11 @@ def view_results(request):
 
     for pos in positions:
         total = sum(c.votes for c in pos.candidates.all())
-        pos.total_votes = total  # ✅ Attach total_votes directly to position
+        pos.total_votes = total  # Attach total_votes to position
+        for candidate in pos.candidates.all():
+            candidate.percent = (candidate.votes / total * 100) if total > 0 else 0  # Calculate percentage
 
     return render(request, 'home/results.html', {'positions': positions})
-
 
 # ✅ Renamed Generate Codes View
 @csrf_exempt

@@ -218,7 +218,6 @@
   </style>
 </head>
 <body>
-  {% load custom_filters %}
   <button class="print-btn" onclick="window.print()">🖨️ Print Results</button>
 
   <div class="container">
@@ -248,15 +247,8 @@
                     </span>
                   </div>
                   <div class="progress">
-                    {% if position.total_votes > 0 %}
-                      {% with percent=candidate.votes|floatformat:2|divide:position.total_votes|mul:100 %}
-                        <div class="progress-bar" role="progressbar" style="width: {{ percent|floatformat:0 }}%"
-                             aria-valuenow="{{ percent|floatformat:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
-                      {% endwith %}
-                    {% else %}
-                      <div class="progress-bar" role="progressbar" style="width: 0%"
-                           aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                    {% endif %}
+                    <div class="progress-bar" role="progressbar" style="width: {{ candidate.percent|floatformat:0 }}%"
+                         aria-valuenow="{{ candidate.percent|floatformat:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
                   </div>
                 </div>
               </div>
