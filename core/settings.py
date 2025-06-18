@@ -19,7 +19,7 @@ import pytz
 from pytz import timezone as pytz_timezone
 
 VOTING_END_TIME = make_aware(
-    datetime(2025, 6, 25, 15, 0, 0),
+    datetime(2025, 6, 25, 20, 0, 0),
     timezone=pytz_timezone("Africa/Lagos")  # ⬅️ Add this
 )
 
