@@ -70,7 +70,7 @@
         <div class="checkmark"></div>
         <h1>Voting Exercise Completed!</h1>
         <p>Thank you for participating in this important democratic process. Your vote has been successfully recorded, and the voting exercise has now concluded.</p>
-        <p><strong>Results will be available today by 8:05pm.</strong></p>
+        <p><strong>Results will be available by 8:05pm.</strong></p>
         <div>
             <a href="{% url 'view_results' %}" class="btn btn-primary btn-results disabled">View Results</a>
         </div>
@@ -79,3 +79,201 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vote Now</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #1F2937;
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      background-color: #1E3A8A;
+      padding: 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      width: 90%;
+      max-width: 450px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    h1 {
+      margin-bottom: 2rem;
+      font-size: 2.5rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    input {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.25rem;
+      border-radius: 10px;
+      border: none;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    button {
+      width: 100%;
+      max-width: 250px;
+      padding: 1rem;
+      background-color: #10B981;
+      border: none;
+      color: white;
+      font-size: 1.25rem;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #059669;
+    }
+
+    .alert {
+      background-color: #DC2626;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+      text-align: center;
+      width: 100%;
+    }
+
+    p.error {
+      color: #DC2626;
+      margin-top: 1.5rem;
+      font-weight: bold;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+
+    .alt-option {
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .alt-option p {
+      color: #D1D5DB;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .alt-option a {
+      display: inline-block;
+      background-color: #3B82F6;
+      color: white;
+      padding: 0.8rem 1.2rem;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .alt-option a:hover {
+      background-color: #2563EB;
+    }
+
+    @media screen and (max-width: 600px) {
+      .card {
+        padding: 2rem;
+        width: 95%;
+        max-width: 400px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      input {
+        padding: 0.9rem;
+        font-size: 1.1rem;
+      }
+
+      button {
+        max-width: 220px;
+        padding: 0.9rem;
+        font-size: 1.1rem;
+      }
+
+      .alt-option a {
+        font-size: 1rem;
+        padding: 0.75rem 1rem;
+      }
+    }
+
+    @media screen and (max-width: 400px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      input, button {
+        font-size: 1rem;
+        padding: 0.8rem;
+      }
+
+      .card {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    {% if messages %}
+      <div>
+        {% for message in messages %}
+          <div class="alert">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <h1>Vote Now</h1>
+
+    <form method="POST">
+      {% csrf_token %}
+      <input type="text" name="code" placeholder="Enter participant code" required />
+      <button type="submit">Vote Now</button>
+    </form>
+
+    {% if error %}
+      <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <div class="alt-option">
+      <p>Don't have a code?</p>
+      <a href="{% url 'public_vote' %}">🌍 Vote Without Code</a>
+    </div>
+  </div>
+</body>
+</html> -->
